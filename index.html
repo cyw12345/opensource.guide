@@ -1,4 +1,282 @@
----
-layout: index
-lang: en
----
+#include <iostream> 
+#include <cstring>
+using namespace std;
+const int STR_BUF_SIZE = 256;
+class CString {
+public:
+	CString(const char*c = "")
+	{
+		m_size = strlen(c);
+		m_p = new char[m_size + 1];
+		strcpy(m_p, c);
+	}
+	CString(const CString &s)
+	{
+		m_size = s.m_size;
+		m_p = new char[strlen(s.m_p) + 1];
+		strcpy(m_p, s.m_p);
+	}
+	CString(CString &s, int id, int num)
+	{
+		m_size = s.m_size;
+		m_p = new char[num + 1];
+		strncpy(m_p, s.m_p + id, num);
+		m_p[num] = '\0';
+	}
+	CString(const char *c, unsigned num)
+	{
+		m_size = strlen(c);
+		m_p = new char[num + 1];
+		strncpy(m_p, c, num);
+		m_p[num] = '\0';
+	}
+	~CString()
+	{
+		delete[]m_p;
+	}
+	friend istream &operator >> (istream&in, CString &c);
+	friend ostream &operator<<(ostream&out, CString &c);
+	CString operator+=(const char *c);
+	CString operator+=(CString & s);
+	bool operator!=(const char * c)const;
+	bool operator!=(const CString & s) const;
+	friend bool operator!=(const char * c, const CString& s);
+	bool operator<=(const char * c) const;
+	bool operator<=(const CString & s) const;
+	friend bool operator<=(const char * c, const CString& s);
+	CString& insert(int id,char * c);
+	int findLastPos(char ch)const;
+	bool empty()const;
+	void clear();
+private:
+	char *m_p;
+	int m_size;
+
+};
+
+istream &operator >> (istream&in, CString &c)
+{
+	cin >> c.m_p;
+	c.m_size = strlen(c.m_p);
+	return in;
+}
+ostream &operator<<(ostream&out, CString &c)
+{
+	out << c.m_p;
+	return out;
+}
+
+CString CString::operator+=(const char *c)
+{
+	char *temp = m_p;
+	m_size = strlen(m_p) + strlen(c);
+	m_p = new char[m_size + 1];
+	strcpy(m_p, temp);
+	strcat(m_p, c);
+	delete[]temp;
+	return *this;
+}
+CString CString::operator+=(CString &s)
+{
+	char *temp = m_p;
+	m_size = s.m_size + m_size + 2;
+	m_p = new char[m_size + 1];
+	strcpy(m_p, temp);
+	strcat(m_p, s.m_p);
+	delete[]temp;
+	return *this;
+}
+
+bool CString::operator!=(const char * c) const
+{
+	if (strcmp(m_p, c) != 0)
+		return true;
+	return false;
+}
+	
+
+bool CString::operator!=(const CString &s) const
+{
+	if (strcmp(m_p, s.m_p) != 0)
+		return true;
+	return false;
+}
+
+bool operator!=(const char * c, const CString & s)
+{
+	if (strcmp(c, s.m_p) != 0)
+		return true;
+	return false;
+}
+
+bool CString::operator<=(const char * c) const
+{
+	if (strcmp(m_p, c) <= 0)
+		return true;
+	return false;
+}
+
+bool CString::operator<=(const CString & s) const
+{
+	if (strcmp(m_p, s.m_p) <= 0)
+		return true;
+	return false;
+}
+
+bool operator<=(const char * c, const CString & s)
+{
+	if (strcmp(c, s.m_p) <= 0)
+		return true;
+	return false;
+}
+
+CString & CString::insert(int id,char * c)
+{
+	char *p, *p1, *buf;
+	int len = m_size;					
+	int len1 = strlen(c);
+	int left = len - id;				
+	int i;
+	buf =m_p;						
+	m_p = new char[len + len1 + 1];		
+	strcpy(m_p, buf);				
+	delete[]buf;					
+	p = m_p + len;						
+	p1 = p + len1;						
+	for (i = 1; i <= left + 1; i++)				
+		*p1-- = *p--;
+	p = m_p + id;						
+	p1 = c;
+	while (*p1 != '\0')				
+		*p++ = *p1++;
+	m_size = len + len1;					
+	return(*this);
+}
+
+int CString::findLastPos(char ch) const
+{
+	for (int i = m_size-1; i>=0 ; i--)
+	{
+		if (m_p[i] == ch)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+bool CString::empty() const
+{
+	if (m_size == 0)
+		return 0;
+	else
+		return 1;
+}
+
+void CString::clear()
+{
+	delete[]m_p;
+	const char *c = "";
+	m_size = strlen(c);
+	m_p = new char[m_size + 1];		
+	if (m_p == NULL)
+		exit(1);
+	strcpy(m_p, c);
+}
+
+int main()
+{
+	char strs[10][STR_BUF_SIZE], ch;
+	int pos, pos2, num, num2;
+
+	cin.getline(strs[0], STR_BUF_SIZE);
+	cin.getline(strs[1], STR_BUF_SIZE);
+	cin.getline(strs[2], STR_BUF_SIZE);
+	cin.getline(strs[3], STR_BUF_SIZE);
+	cin.getline(strs[4], STR_BUF_SIZE);
+	cin.getline(strs[5], STR_BUF_SIZE);
+	cin.getline(strs[6], STR_BUF_SIZE);
+	cin.getline(strs[7], STR_BUF_SIZE);
+	cin.getline(strs[8], STR_BUF_SIZE);
+	cin.getline(strs[9], STR_BUF_SIZE);
+	cin >> pos >> pos2 >> num >> num2 >> ch;
+
+	CString a(strs[0]);
+  	CString b(a, pos, num);
+	CString c(strs[1], num2);
+	CString d(strs[2]);
+	 
+	cout << a << "\n" << b << "\n" << c << endl;
+
+	a += strs[3];
+	b += c;
+	cout << a << "\n" << b << endl;
+
+	if (d != strs[4])
+	{
+		cout << "d != strs[4]" << endl;
+	}
+	else
+	{
+		cout << "d == strs[4]" << endl;
+	}
+
+	CString e(strs[5]);
+	if (d != e)
+	{
+		cout << "d != e" << endl;
+	}
+	else
+	{
+		cout << "d == e" << endl;
+	}
+
+	if (strs[6] != e)
+	{
+		cout << "strs[6] != e" << endl;
+	}
+	else
+	{
+		cout << "strs[6] == e" << endl;
+	}
+
+	if (e <= strs[7])
+	{
+		cout << "e <= strs[7]" << endl;
+	}
+	else
+	{
+		cout << "e > strs[7]" << endl;
+	}
+
+	CString f(strs[8]);
+	if (e <= f)
+	{
+		cout << "e <= f" << endl;
+	}
+	else
+	{
+		cout << "e > f" << endl;
+	}
+
+	if (strs[9] <= f)
+	{
+		cout << "strs[9] <= f" << endl;
+	}
+	else
+	{
+		cout << "strs[9] > f" << endl;
+	}
+
+	CString g;
+	g = f.insert(pos2, strs[9]); // 在类串f的位置pos2处插入C串strs[9]
+	cout << g << endl;
+	cout << f.findLastPos(ch) << endl; // f.findLastPos(ch)：查找字符ch在类串f中最后出现的位置。若找到ch，则返回它的位置，若未找到，则返回-1
+	cout << f.empty() << endl; // f.empty()判断类串f是否为空串，若为空串则返回1，否则返回0
+	f.clear(); // 清串，注意释放内存，清串后，原串变为空串；""为清空后的C串
+	cout << f.empty() << endl;
+
+	return 0;
+}
+
+                           
